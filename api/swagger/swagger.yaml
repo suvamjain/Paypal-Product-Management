@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
-  version: "0.0.1"
-  title: Hello World App
+  version: "1.0.1"
+  title: Product Management API
 # during dev, should point to your local machine
 host: localhost:10010
 # basePath prefixes all resource paths 
@@ -16,287 +16,10 @@ consumes:
 # format of the responses to the client (Accepts)
 produces:
   - application/json
-  
-paths:
-  /hello:
-    # binds a127 app logic to a route
-    x-swagger-router-controller: hello_world
-    get:
-      description: Returns 'Hello' to the caller
-      # used as the method name of the controller
-      operationId: greet
-      parameters:
-        - name: name
-          in: query
-          type: string
-          description: The name of the person to whom to say hello
-          required: false
-                
-      responses:
-        "200":
-          description: Success
-          schema: 
-            $ref: "#/definitions/HelloWorldResponse"
-            
-        "404":
-          description: Not Found
-          schema:
-            required:
-              - msg
-            properties:
-              msg:
-                type: string
-              
-        # responses may fall through to errors
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ResponseMsg"
-            
-  /Product:
-    x-swagger-router-controller: product
-    get:
-      description: Returns Product
-      operationId: getProd
-      summary: Get All Products
-      parameters:
-        - in: query
-          name: query
-          required: false
-          type: string
-          description: Name or Description of the product to be fetched
-      
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/Product"
-          examples:
-            $ref: '#/definitions/Product/example'
-            
-        "404":
-          description: Not Found
-          schema:
-            required:
-              - msg
-            properties:
-              msg:
-                type: string
-                
-        # responses may fall through to errors
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ResponseMsg"
-          examples:
-             $ref: '#/definitions/ResponseMsg/example/1'
-    
-    post:
-      description: Adds a Product
-      operationId: addProd
-      consumes:
-        - application/json
-      parameters:
-        - in: body
-          name: product
-          description: Details of Product to be added
-          required: true
-          schema:
-            $ref: '#/definitions/AddTemplate'  
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/ResponseMsg"
-          examples:
-             $ref: '#/definitions/ResponseMsg/example/0'
-              
-        # responses may fall through to errors
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ResponseMsg"
-          examples:
-             $ref: "#/definitions/ResponseMsg/example/1"
-            
-  /Product/{prodID}:
-    x-swagger-router-controller: product
-    get:
-      description: Get a product by ID
-      operationId: getProdById
-      parameters:
-        - in: path
-          name: prodID
-          required: true
-          type: string
-          pattern: '^\d{2}-\w{2,3}-\d{9}$'
-          minLength: 15
-          maxLength: 16
-          description: ID of the product that needs to be fetched
-      
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/Product"
-          examples:
-            $ref: '#/definitions/Product/example'
-            
-        "404":
-          description: Not Found
-          schema:
-            required:
-              - msg
-            properties:
-              msg:
-                type: string
-                
-        # responses may fall through to errors
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ResponseMsg"
-          examples:
-             $ref: '#/definitions/ResponseMsg/example/1'
-          
-    put:
-      description: Updates a Product by id
-      operationId: updateById
-      consumes:
-         - application/json
-      parameters:
-        - in: path
-          name: prodID   # Note the name is the same as in the path
-          required: true
-          type: string
-          pattern: '^\d{2}-\w{2,3}-\d{9}$'
-          minLength: 15
-          maxLength: 16
-          description: ID of the product that needs to be updated
-        
-        - in: body
-          name: product
-          description: Details of Product to be updated
-          required: true
-          schema:
-            $ref: '#/definitions/Template' 
-      responses:
-        "200":
-          description: Updated Product
-          schema:
-            $ref: "#/definitions/Product"
-          examples:
-            $ref: '#/definitions/Product/example'
-        
-        "404":
-          description: Product Not Found
-          schema:
-            required:
-              - msg
-            properties:
-              msg:
-                type: string
-                  
-        # responses may fall through to errors
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ResponseMsg"
-          examples:
-            $ref: '#/definitions/ResponseMsg/example/1'
-  
-    delete:
-      description: Deletes product with this prodID
-      operationId: deleteById
-      parameters:
-        - in: path
-          name: prodID   # Note the name is the same as in the path
-          required: true
-          type: string
-          pattern: '^\d{2}-\w{2,3}-\d{9}$'
-          minLength: 15
-          maxLength: 16
-          description: ID of the product that needs to be deleted
-          
-      responses:
-        "200":
-          description: Product Deleted
-          schema:
-            $ref: "#/definitions/ResponseMsg"
-          examples:
-             $ref: '#/definitions/ResponseMsg/example/2'
-          
-        "404":
-          description: Product Not Found
-          schema:
-            required:
-              - msg
-            properties:
-              msg:
-                type: string
-                
-        # responses may fall through to errors
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ResponseMsg"
-          examples:
-             $ref: "#/definitions/ResponseMsg/example/1"
-             
-  /Product/Category:
-    x-swagger-router-controller: product
-    get:
-      description: Filter products by category
-      operationId: filterByCatg
-      parameters:
-        - in: query
-          name: filters
-          required: false
-          type: array
-          items:
-            type: string
-            enum: ['Books', 'Beauty and Health', 'Grocery', 'Electronics and Appliances', 'Fashion', 'Sports and Fitness', 'Home and Kitchen', 'Personal Hygiene', 'Others']
-          uniqueItems: true
-          description: Categories of the product that needs to be fetched
-      
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/CategoryRes"
-          examples:
-            $ref: '#/definitions/CategoryRes/example'
-            
-        "404":
-          description: Not Found
-          schema:
-            required:
-              - msg
-            properties:
-              msg:
-                type: string
-                
-        # responses may fall through to errors
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ResponseMsg"
-          examples:
-             $ref: '#/definitions/ResponseMsg/example/1'
-    
-        
-  /swagger:
-    x-swagger-pipe: swagger_raw
-    
+
 # complex objects have schema definitions
 definitions:
-  HelloWorldResponse:
-    required:
-      - message
-    properties:
-      message:
-        type: string
-        
+
   ResponseMsg:
     type: object
     required: [message, id]
@@ -313,7 +36,28 @@ definitions:
         message: 'Some Error Occured'
       - id: '03-Co-781215416'
         message: 'Deleted successfully'
+        
+  colors: 
+    type: array
+    items:
+      type: string
+      enum: &col [ 'blue', 'green', 'orange', 'yellow', 'red', 'white', 'black', 'other']
+    uniqueItems: true
+    description: Available Colors of the product
   
+  sizes: 
+    type: array
+    items:
+      type: string
+      enum: &siz ["XS","S", "M", "L", "XL"]
+    uniqueItems: true
+    description: Available Sizes of the product
+    
+  categories:
+    type: string
+    enum: &categ ['Books', 'Beauty and Health', 'Grocery', 'Electronics and Appliances', 'Fashion', 'Sports and Fitness', 'Home and Kitchen', 'Personal Hygiene', 'Others']
+    description: Category of the product
+    
   Template:
     type: object
     # required: [name, catg, status, sellMode, gstBracket]
@@ -328,9 +72,7 @@ definitions:
         type: string
         description: Brand of the product to be added or updated
       catg: 
-        type: string
-        enum: ['Books', 'Beauty and Health', 'Grocery', 'Electronics and Appliances', 'Fashion', 'Sports and Fitness', 'Home and Kitchen', 'Personal Hygiene', 'Others']
-        description: Category of the product to be added or updated
+         $ref: '#/definitions/categories'
       weight:
         type: string
         description: Weight of the product to be added or updated
@@ -339,37 +81,23 @@ definitions:
         description: Price of the product to be added or updated
       status: 
         type: string
-        enum: ["live","draft","out-of-stock"]
+        enum: &stat ["live","draft","out-of-stock"]
         description: Status of the product to be added or updated
       sellMode:
         type: string
         enum: ["physical","digital"]
         description: Selling Mode of the product to be added or updated
-      gstBracket: 
-        type: integer
-        enum: [5, 12, 18, 28]
-        description: Tax Bracket of the product to be added or updated
       media: 
         type: array
         items:
           type: string
         description: Image files of the product to be added or updated
       colors:
-         type: array
-         items:
-          type: string
-          enum: [ 'blue', 'green', 'orange', 'yellow', 'red', 'white', 'black', 'other']
-         uniqueItems: true
-         description: Available Colors of the product to be added or updated
+        $ref: '#/definitions/colors'
       sizes: 
-         type: array
-         items: 
-          type: string
-          enum: ["S", "M", "L", "XS", "XXS", "XL", "XXL"]
-         uniqueItems: true
-         description: Available Sizes of the product to be added or updated
+        $ref: '#/definitions/sizes'
          
-      childProds:
+      offers:
          type: array
          items:
           $ref: '#/definitions/ChildProd'
@@ -400,34 +128,34 @@ definitions:
             pattern: '^\d{2}-\w{2,3}-\d{9}$'
             minLength: 15
             maxLength: 16
-    required: [sku, name, price, catg, status, sellMode, gstBracket]
+    required: [sku, name, price, catg, status, sellMode] #gstBracket
         
     example:
-      sku: '01-Oil-752940213'
-      name: 'Oil Control'
-      desc: 'Mens Facewash'
-      brand: 'Nivea'
+      sku: '01-Coo-752940213'
+      name: 'Cool Talc'
+      desc: 'Sea Minerals'
+      brand: 'Wild Stone'
       catg: 'Beauty and Health'
       weight: '90g'
       price: 75
       status: 'live'
       sellMode: 'physical'
-      gstBracket: 18
       media: [ 'str1.png', 'str2.png' ]
       colors: [ 'blue', 'green' ]
-      sizes: [ 'S', 'XS', 'L' ]
-      childProds:
+      sizes: [ 'S', 'L' ]
+      gstBracket: 18
+      offers:
         - id: '02-Mil-781191422'
           baseOffer: 2
           free: 1
         - id: '03-Co-781215416'
           baseOffer: 1
-          free: 1 
+          free: 1
       
   AddTemplate:
     allOf:
       - $ref: "#/definitions/Template"
-    required: [name, price, catg, status, sellMode, gstBracket]
+    required: [name, price, catg, status, sellMode] #gstBracket
     
   CategoryRes:
     type: object
@@ -438,3 +166,296 @@ definitions:
           name: 'Oil Control'
         - id: '01-Oil-752940213'
           name: 'Oil Control'
+          
+# Descriptions of common responses
+responses:
+
+  MessageRes:
+    description: Error
+    schema:
+      $ref: '#/definitions/ResponseMsg'
+    examples:
+      $ref: '#/definitions/ResponseMsg/example/1'
+
+  SuccessProd:
+    description: Product Returned
+    schema:
+      $ref: "#/definitions/Product"
+    examples:
+      $ref: '#/definitions/Product/example'
+      
+tags:
+  - name: Products
+    description: Everything about Products
+  - name: Utils
+    description: Additional Functionalities for searching
+        
+
+  
+paths:
+
+  /Product:
+    x-swagger-router-controller: product
+    get:
+      description: Return all products matching the constraints
+      summary: Get all products by filter
+      tags:
+        - Products
+      operationId: getProd
+      
+      parameters:
+        - in: query
+          name: keywords
+          required: false
+          type: string
+          description: Name or Description of the product
+        - in: query
+          name: brand
+          required: false
+          type: array
+          items:
+            type: string
+          description: Brand of the product
+        - in: query
+          name: category
+          required: false
+          type: array
+          items:
+            type: string
+            enum: *categ
+          uniqueItems: true
+          description: Categories of the product
+        - in: query
+          name: status
+          required: false
+          type: array
+          items:
+            type: string
+            enum: *stat
+          uniqueItems: true
+          description: Status of the product
+      
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+             $ref: "#/definitions/Product"
+          examples:
+            $ref: "#/definitions/Product/example"
+            
+        "404":
+          $ref: '#/responses/MessageRes'
+                
+        default:
+          $ref: '#/responses/MessageRes'
+    
+    post:
+      operationId: addProd
+      description: Adds a product to the inventory
+      summary: Creates a new product
+      tags:
+        - Products
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: product
+          description: Details of Product to be added
+          required: true
+          schema:
+            $ref: '#/definitions/AddTemplate'  
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/ResponseMsg"
+          examples:
+            $ref: '#/definitions/ResponseMsg/example/0'
+              
+        default:
+          $ref: '#/responses/MessageRes'
+            
+  /Product/{prodID}:
+    x-swagger-router-controller: product
+    get:
+      description: Allows to fetch specific or all parameters for the given ID
+      summary: Gets a Product by ID
+      tags:
+        - Products
+      operationId: getProdById
+      parameters:
+        - in: path
+          name: prodID
+          required: true
+          type: string
+          pattern: '^\d{2}-\w{2,3}-\d{9}$'
+          minLength: 15
+          maxLength: 16
+          description: ID of the product that needs to be fetched
+        - in: query
+          name: attributes
+          required: false
+          type: array
+          items:
+            type: string
+            enum: [brand,category,taxed-price,status,variations,offers]
+          uniqueItems: true
+          description: Attributes of product to be fetched
+      
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: object
+            required: [sku]
+            properties:
+              sku:
+                type: string
+                pattern: '^\d{2}-\w{2,3}-\d{9}$'
+                minLength: 15
+                maxLength: 16
+            additionalProperties: true
+            
+        "404":
+          $ref: '#/responses/MessageRes'
+                
+        default:
+          $ref: '#/responses/MessageRes'
+          
+    put:
+      description: Allows to update specific or all attributes of a product
+      summary: Updates a Product by ID
+      tags:
+        - Products
+      operationId: updateById
+      consumes:
+         - application/json
+      parameters:
+        - in: path
+          name: prodID   # Note the name is the same as in the path
+          required: true
+          type: string
+          pattern: '^\d{2}-\w{2,3}-\d{9}$'
+          minLength: 15
+          maxLength: 16
+          description: ID of the product that needs to be updated
+        
+        - in: body
+          name: product
+          description: Details of Product to be updated
+          required: true
+          schema:
+            $ref: '#/definitions/Template' 
+      responses:
+        "200":
+          $ref: '#/responses/SuccessProd'
+        
+        "404":
+          $ref: '#/responses/MessageRes'
+                  
+        default:
+          $ref: '#/responses/MessageRes'
+  
+    delete:
+      description: Allows to delete specific attributes or the whole product
+      summary: Deletes a product by ID
+      tags:
+        - Products
+      operationId: deleteById
+      parameters:
+        - in: path
+          name: prodID   # Note the name is the same as in the path
+          required: true
+          type: string
+          pattern: '^\d{2}-\w{2,3}-\d{9}$'
+          minLength: 15
+          maxLength: 16
+          description: ID of the product that needs to be deleted
+        - in: query
+          name: attributes
+          required: false
+          type: array
+          items:
+            type: string
+            enum: [sizes,colors,media,offers]
+          uniqueItems: true
+          description: Attributes of product to be deleted
+          
+      responses:
+        "200":
+          description: Product Deleted
+          schema:
+            $ref: "#/definitions/ResponseMsg"
+          examples:
+             $ref: '#/definitions/ResponseMsg/example/2'
+          
+        "404":
+          $ref: '#/responses/MessageRes'
+              
+        default:
+          $ref: '#/responses/MessageRes'
+             
+  /Product/Category:
+    x-swagger-router-controller: product
+    get:
+      description: Fetches product belonging to specific or all categories
+      summary:  Filter products by categories
+      tags:
+        - Utils
+      operationId: filterByCatg
+      parameters:
+        - in: query
+          name: filters
+          required: false
+          type: array
+          items:
+            type: string
+            enum: *categ
+          uniqueItems: true
+          description: Categories of the product that needs to be fetched
+      
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/CategoryRes"
+          examples:
+            $ref: '#/definitions/CategoryRes/example'
+            
+        "404":
+          $ref: '#/responses/MessageRes'
+
+        default:
+          $ref: '#/responses/MessageRes'
+  
+  /Product/Offers:
+    x-swagger-router-controller: product
+    get:
+      description: Products having some offers will be displayed 
+      summary: Displays products having some offers
+      tags:
+        - Utils
+      operationId: getAllOfferProduct
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: object
+            additionalProperties: 
+              $ref: "#/definitions/Template/properties/offers"
+          examples:
+            02-Mil-123456789:
+              - id: '01-Cho-123456789'
+                baseOffer: 0
+                free: 1
+              - id: '02-Bar-345612345'
+                baseOffer: 2
+                free: 1
+            
+        "404":
+          $ref: '#/responses/MessageRes'
+        
+  /swagger:
+    x-swagger-pipe: swagger_raw
